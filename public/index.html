@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="UTF-8" />
+  <title>Win Counter Overlay</title>
+
   <style>
     body {
       margin: 0;
@@ -15,40 +18,44 @@
       position: absolute;
       top: 50px;
       left: 50px;
-      transition: color 0.3s ease;
+      color: white;
       text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+      transition: color 0.3s ease;
     }
   </style>
 </head>
 
 <body>
 
-<div id="wins">WIN : 0</div>
+<div id="wins">WIN : 0 / 100</div>
 
 <script>
-let lastValue = 0;
-
 async function update() {
-  const res = await fetch("/wins");
-  const data = await res.json();
+  try {
+    const res = await fetch("/wins");
+    const data = await res.json();
 
-  const value = data.wins;
-  const el = document.getElementById("wins");
+    const wins = data.wins;
+    const goal = data.goal;
 
-  el.innerText = "WIN : " + value;
+    const el = document.getElementById("wins");
 
-  // 🎨 Couleurs dynamiques
-  if (value === 0) {
-    el.style.color = "white";
-  } 
-  else if (value > 0) {
-    el.style.color = "green";
-  } 
-  else {
-    el.style.color = "red";
+    el.innerText = `WIN : ${wins} / ${goal}`;
+
+    // 🎨 Couleurs dynamiques
+    if (wins === 0) {
+      el.style.color = "white";
+    } 
+    else if (wins > 0) {
+      el.style.color = "green";
+    } 
+    else {
+      el.style.color = "red";
+    }
+
+  } catch (err) {
+    console.log("Erreur API", err);
   }
-
-  lastValue = value;
 }
 
 setInterval(update, 1000);
