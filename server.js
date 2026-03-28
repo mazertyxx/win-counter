@@ -33,12 +33,19 @@ app.get("/wins", (req, res) => {
 // =====================
 
 function addWin(amount) {
+
+  // sécurité totale
+  if (!Number.isFinite(wins)) wins = 0;
+  if (!Number.isFinite(multiplier)) multiplier = 1;
+
   if (Date.now() > multiplierEnd) {
     multiplier = 1;
     multiplierEnd = 0;
   }
 
   wins += amount * multiplier;
+
+  if (!Number.isFinite(wins)) wins = 0;
 
   if (wins >= goal) {
     wins = 0;
@@ -112,19 +119,16 @@ app.post("/goal", (req, res) => {
 // =====================
 
 app.post("/multiplier", (req, res) => {
-  let value = parseInt(req.body?.value);
+  let value = Number(req.body?.value);
 
-  if (!value || value <= 0) {
-    return res.status(400).json({ error: "Invalid multiplier value" });
+  if (!Number.isFinite(value) || value <= 0) {
+    value = 1;
   }
 
   multiplier = value;
   multiplierEnd = Date.now() + 5 * 60 * 1000;
 
-  res.json({
-    multiplier,
-    multiplierEnd
-  });
+  res.json({ multiplier, multiplierEnd });
 });
 
 // =====================
