@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      background: transparent;
+      color: white;
+      font-size: 60px;
+      font-family: Arial;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+Wins: <span id="wins">0</span>
+
+<script>
+async function update() {
+  const res = await fetch("http://localhost:3000/wins");
+  const data = await res.json();
+  document.getElementById("wins").innerText = data.wins;
+}
+
+setInterval(update, 1000);
+</script>
+
+</body>
+</html>
