@@ -17,6 +17,13 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+// Set GOAL
+app.post("/goal", (req, res) => {
+  const { newGoal } = req.body;
+  goal = parseInt(newGoal);
+  res.json({ goal });
+});
+
 // 📊 GET wins
 app.get("/wins", (req, res) => {
   res.json({ wins });
