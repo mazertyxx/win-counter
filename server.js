@@ -1,59 +1,77 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const path = require("path");
 
 app.use(cors());
 app.use(express.json());
 
-// Sert les fichiers du dossier public
-app.use(express.static("public"));
-
+// =====================
+// 🎮 GAME STATE
+// =====================
 let wins = 0;
-let goal = 10;
+let goal = 100;
 
 let multiplier = 1;
 let multiplierEnd = 0;
 
-// 🌐 PAGE PRINCIPALE (fix "Cannot GET /")
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
+// =====================
+// 🌐 BASIC ROUTES
+// =====================
 
-// Set GOAL
-app.post("/goal", (req, res) => {
-  const { newGoal } = req.body;
-  goal = parseInt(newGoal);
-  res.json({ goal });
-});
-
-// 📊 GET wins
+// GET HUD DATA
 app.get("/wins", (req, res) => {
-  res.json({ wins, goal });
+  res.json({
+    wins,
+    goal,
+    multiplier,
+    multiplierEnd
+  });
 });
 
-// ➕ ADD win
+// =====================
+// ➕ WIN SYSTEM
+// =====================
+
+function addWin(amount) {
+  if (Date.now() > multiplierEnd) {
+    multiplier = 1;
+    multiplierEnd = 0;
+  }
+
+  wins += amount * multiplier;
+
+  if (wins >= goal) {
+    wins = 0;
+  }
+}
+
+// +1
 app.post("/win1", (req, res) => {
-  wins += 1;
+  addWin(1);
   res.json({ wins });
 });
 
+// +5
 app.post("/win5", (req, res) => {
-  wins += 5;
+  addWin(5);
   res.json({ wins });
 });
 
+// +25
 app.post("/win25", (req, res) => {
-  wins += 25;
+  addWin(25);
   res.json({ wins });
 });
 
+// +75
 app.post("/win75", (req, res) => {
-  wins += 75;
+  addWin(75);
   res.json({ wins });
 });
 
-// NEGATIF
+// =====================
+// ➖ LOSE SYSTEM
+// =====================
 
 app.post("/lose5", (req, res) => {
   wins -= 5;
@@ -70,13 +88,45 @@ app.post("/lose75", (req, res) => {
   res.json({ wins });
 });
 
+// =====================
 // 🔄 RESET
+// =====================
+
 app.post("/reset", (req, res) => {
   wins = 0;
   res.json({ wins });
 });
 
-// 🚀 Render utilise PORT dynamique
+// =====================
+// 🎯 GOAL SYSTEM
+// =====================
+
+app.post("/goal", (req, res) => {
+  const { newGoal } = req.body;
+  goal = parseInt(newGoal);
+  res.json({ goal });
+});
+
+// =====================
+// 💥 MULTIPLIER SYSTEM
+// =====================
+
+app.post("/multiplier", (req, res) => {
+  const { value } = req.body;
+
+  multiplier = parseInt(value);
+  multiplierEnd = Date.now() + 5 * 60 * 1000; // 5 minutes
+
+  res.json({
+    multiplier,
+    multiplierEnd
+  });
+});
+
+// =====================
+// 🚀 SERVER
+// =====================
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
