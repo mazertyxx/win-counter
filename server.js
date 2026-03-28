@@ -8,17 +8,17 @@ app.use(express.json());
 // =====================
 // 🎮 GAME STATE
 // =====================
-let wins = 0;
-let goal = 10;
 
-let multiplier = 2;
+let wins = 0;
+let goal = 100;
+
+let multiplier = 1;
 let multiplierEnd = 0;
 
 // =====================
-// 🌐 BASIC ROUTES
+// 🌐 GET HUD DATA
 // =====================
 
-// GET HUD DATA
 app.get("/wins", (req, res) => {
   res.json({
     wins,
@@ -29,24 +29,25 @@ app.get("/wins", (req, res) => {
 });
 
 // =====================
-// ➕ WIN SYSTEM
+// 🧠 SAFE WIN FUNCTION
 // =====================
 
 function addWin(amount) {
-
-  // sécurité totale
   if (!Number.isFinite(wins)) wins = 0;
   if (!Number.isFinite(multiplier)) multiplier = 1;
 
+  // stop multiplier if expired
   if (Date.now() > multiplierEnd) {
     multiplier = 1;
     multiplierEnd = 0;
   }
 
   wins += amount * multiplier;
-
-  if (!Number.isFinite(wins)) wins = 0;
 }
+
+// =====================
+// ➕ WINS
+// =====================
 
 // +1
 app.post("/win1", (req, res) => {
@@ -73,7 +74,7 @@ app.post("/win75", (req, res) => {
 });
 
 // =====================
-// ➖ LOSE SYSTEM
+// ➖ LOSSES
 // =====================
 
 app.post("/lose5", (req, res) => {
@@ -92,7 +93,7 @@ app.post("/lose75", (req, res) => {
 });
 
 // =====================
-// 🔄 RESET
+// 🔄 RESET (MANUEL UNIQUEMENT)
 // =====================
 
 app.post("/reset", (req, res) => {
@@ -101,17 +102,21 @@ app.post("/reset", (req, res) => {
 });
 
 // =====================
-// 🎯 GOAL SYSTEM
+// 🎯 OBJECTIVE (NO AUTO RESET)
 // =====================
 
 app.post("/goal", (req, res) => {
   const { newGoal } = req.body;
-  goal = parseInt(newGoal);
+
+  if (Number.isFinite(Number(newGoal))) {
+    goal = Number(newGoal);
+  }
+
   res.json({ goal });
 });
 
 // =====================
-// 💥 MULTIPLIER SYSTEM
+// 💥 MULTIPLIER (5 MIN)
 // =====================
 
 app.post("/multiplier", (req, res) => {
@@ -124,23 +129,18 @@ app.post("/multiplier", (req, res) => {
   multiplier = value;
   multiplierEnd = Date.now() + 5 * 60 * 1000;
 
-  res.json({ multiplier, multiplierEnd });
+  res.json({
+    multiplier,
+    multiplierEnd
+  });
 });
 
 // =====================
-// 🚀 SERVER
+// 🚀 SERVER START
 // =====================
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Serveur running on port " + PORT);
-});
-
-const path = require("path");
-
-app.use(express.static("public"));
-
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  console.log("🚀 Serveur running on port " + PORT);
 });
