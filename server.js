@@ -9,7 +9,7 @@ app.use(express.json());
 // 🎮 GAME STATE
 // =====================
 let wins = 0;
-let goal = 100;
+let goal = 10;
 
 let multiplier = 1;
 let multiplierEnd = 0;
