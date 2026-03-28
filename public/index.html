@@ -1,25 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Win Counter Overlay</title>
+  <meta charset="UTF-8">
+  <title>Win Counter HUD</title>
 
   <style>
     body {
       margin: 0;
       background: transparent;
       overflow: hidden;
-      font-family: Arial, sans-serif;
+      font-family: Arial;
+    }
+
+    #container {
+      position: absolute;
+      top: 50px;
+      left: 50px;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
     }
 
     #wins {
       font-size: 80px;
       font-weight: bold;
-      position: absolute;
-      top: 50px;
-      left: 50px;
       color: white;
-      text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
+      transition: color 0.3s ease;
+    }
+
+    #mult {
+      font-size: 28px;
+      margin-top: 10px;
+      color: transparent;
       transition: color 0.3s ease;
     }
   </style>
@@ -27,34 +37,53 @@
 
 <body>
 
-<div id="wins">WIN : 0 / 100</div>
+<div id="container">
+  <div id="wins">WIN : 0 / 100</div>
+  <div id="mult"></div>
+</div>
 
 <script>
+function formatTime(ms) {
+  if (ms <= 0) return "0:00";
+  const sec = Math.floor(ms / 1000);
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
 async function update() {
-  try {
-    const res = await fetch("/wins");
-    const data = await res.json();
+  const res = await fetch("/wins");
+  const data = await res.json();
 
-    const wins = data.wins;
-    const goal = data.goal;
+  const wins = data.wins;
+  const goal = data.goal;
+  const mult = data.multiplier;
+  const end = data.multiplierEnd;
 
-    const el = document.getElementById("wins");
+  const winEl = document.getElementById("wins");
+  const multEl = document.getElementById("mult");
 
-    el.innerText = `WIN : ${wins} / ${goal}`;
+  // 🎯 WIN DISPLAY
+  winEl.innerText = `WIN : ${wins} / ${goal}`;
 
-    // 🎨 Couleurs dynamiques
-    if (wins === 0) {
-      el.style.color = "white";
-    } 
-    else if (wins > 0) {
-      el.style.color = "green";
-    } 
-    else {
-      el.style.color = "red";
-    }
+  if (wins === 0) {
+    winEl.style.color = "white";
+  } else if (wins > 0) {
+    winEl.style.color = "green";
+  } else {
+    winEl.style.color = "red";
+  }
 
-  } catch (err) {
-    console.log("Erreur API", err);
+  // 💥 MULTIPLIER DISPLAY
+  const now = Date.now();
+
+  if (mult > 1 && end > now) {
+    const remaining = end - now;
+
+    multEl.innerText = `x${mult} ACTIVE - ${formatTime(remaining)}`;
+    multEl.style.color = "#ffb300"; // jaune orangé
+  } else {
+    multEl.innerText = "";
   }
 }
 
