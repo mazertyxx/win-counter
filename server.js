@@ -26,7 +26,7 @@ app.post("/goal", (req, res) => {
 
 // 📊 GET wins
 app.get("/wins", (req, res) => {
-  res.json({ wins });
+  res.json({ wins, goal });
 });
 
 // ➕ ADD win
