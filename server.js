@@ -112,12 +112,19 @@ app.post("/goal", (req, res) => {
 // =====================
 
 app.post("/multiplier", (req, res) => {
-  const { value } = req.body;
+  let value = parseInt(req.body?.value);
 
-  multiplier = parseInt(value);
+  if (!value || value <= 0) {
+    return res.status(400).json({ error: "Invalid multiplier value" });
+  }
+
+  multiplier = value;
   multiplierEnd = Date.now() + 5 * 60 * 1000;
 
-  res.json({ multiplier, multiplierEnd });
+  res.json({
+    multiplier,
+    multiplierEnd
+  });
 });
 
 // =====================
