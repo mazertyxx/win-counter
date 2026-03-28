@@ -11,7 +11,7 @@ app.use(express.json());
 let wins = 0;
 let goal = 10;
 
-let multiplier = 1;
+let multiplier = 2;
 let multiplierEnd = 0;
 
 // =====================
