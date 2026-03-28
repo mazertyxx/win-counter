@@ -10,6 +10,7 @@ app.use(express.json());
 app.use(express.static("public"));
 
 let wins = 0;
+let goal = 10; // objectif par défaut
 
 // 🌐 PAGE PRINCIPALE (fix "Cannot GET /")
 app.get("/", (req, res) => {
