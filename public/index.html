@@ -9,7 +9,7 @@
       margin: 0;
       background: transparent;
       overflow: hidden;
-      font-family: Arial;
+      font-family: Arial, sans-serif;
     }
 
     #container {
@@ -31,6 +31,7 @@
       margin-top: 10px;
       color: transparent;
       transition: color 0.3s ease;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -43,8 +44,10 @@
 </div>
 
 <script>
+
+// ⏱️ format timer
 function formatTime(ms) {
-  if (ms <= 0) return "0:00";
+  if (!ms || ms <= 0) return "0:00";
   const sec = Math.floor(ms / 1000);
   const m = Math.floor(sec / 60);
   const s = sec % 60;
@@ -52,43 +55,51 @@ function formatTime(ms) {
 }
 
 async function update() {
-  const res = await fetch("/wins");
-  const data = await res.json();
+  try {
+    const res = await fetch("/wins");
+    const data = await res.json();
 
-  const wins = data.wins;
-  const goal = data.goal;
-  const mult = data.multiplier;
-  const end = data.multiplierEnd;
+    // 🛡 SAFE VALUES (anti null / NaN)
+    const wins = Number.isFinite(data.wins) ? data.wins : 0;
+    const goal = Number.isFinite(data.goal) ? data.goal : 100;
+    const mult = Number.isFinite(data.multiplier) ? data.multiplier : 1;
+    const end = Number.isFinite(data.multiplierEnd) ? data.multiplierEnd : 0;
 
-  const winEl = document.getElementById("wins");
-  const multEl = document.getElementById("mult");
+    const winEl = document.getElementById("wins");
+    const multEl = document.getElementById("mult");
 
-  // 🎯 WIN DISPLAY
-  winEl.innerText = `WIN : ${wins} / ${goal}`;
+    // 🎯 WIN DISPLAY
+    winEl.innerText = `WIN : ${wins} / ${goal}`;
 
-  if (wins === 0) {
-    winEl.style.color = "white";
-  } else if (wins > 0) {
-    winEl.style.color = "green";
-  } else {
-    winEl.style.color = "red";
-  }
+    if (wins === 0) {
+      winEl.style.color = "white";
+    } else if (wins > 0) {
+      winEl.style.color = "green";
+    } else {
+      winEl.style.color = "red";
+    }
 
-  // 💥 MULTIPLIER DISPLAY
-  const now = Date.now();
+    // 💥 MULTIPLIER DISPLAY
+    const now = Date.now();
 
-  if (mult > 1 && end > now) {
-    const remaining = end - now;
+    if (mult > 1 && end > now) {
+      const remaining = end - now;
 
-    multEl.innerText = `x${mult} ACTIVE - ${formatTime(remaining)}`;
-    multEl.style.color = "#ffb300"; // jaune orangé
-  } else {
-    multEl.innerText = "";
+      multEl.innerText = `x${mult} ACTIVE - ${formatTime(remaining)}`;
+      multEl.style.color = "#ffb300"; // jaune orangé
+    } else {
+      multEl.innerText = "";
+      multEl.style.color = "transparent";
+    }
+
+  } catch (err) {
+    console.log("API error", err);
   }
 }
 
 setInterval(update, 1000);
 update();
+
 </script>
 
 </body>
