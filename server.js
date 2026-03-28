@@ -22,8 +22,40 @@ app.get("/wins", (req, res) => {
 });
 
 // ➕ ADD win
-app.post("/win", (req, res) => {
-  wins++;
+app.post("/win1", (req, res) => {
+  wins += 1;
+  res.json({ wins });
+});
+
+app.post("/win5", (req, res) => {
+  wins += 5;
+  res.json({ wins });
+});
+
+app.post("/win25", (req, res) => {
+  wins += 25;
+  res.json({ wins });
+});
+
+app.post("/win75", (req, res) => {
+  wins += 75;
+  res.json({ wins });
+});
+
+// NEGATIF
+
+app.post("/lose5", (req, res) => {
+  wins -= 5;
+  res.json({ wins });
+});
+
+app.post("/lose25", (req, res) => {
+  wins -= 25;
+  res.json({ wins });
+});
+
+app.post("/lose75", (req, res) => {
+  wins -= 75;
   res.json({ wins });
 });
 
