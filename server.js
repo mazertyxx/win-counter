@@ -10,7 +10,7 @@ app.use(express.json());
 // =====================
 
 let wins = 0;
-let goal = 100;
+let goal = 10;
 
 let multiplier = 1;
 let multiplierEnd = 0;
@@ -113,26 +113,6 @@ app.post("/goal", (req, res) => {
   }
 
   res.json({ goal });
-});
-
-// =====================
-// 💥 MULTIPLIER (5 MIN)
-// =====================
-
-app.post("/multiplier", (req, res) => {
-  let value = Number(req.body?.value);
-
-  if (!Number.isFinite(value) || value <= 0) {
-    value = 1;
-  }
-
-  multiplier = value;
-  multiplierEnd = Date.now() + 5 * 60 * 1000;
-
-  res.json({
-    multiplier,
-    multiplierEnd
-  });
 });
 
 // =====================
