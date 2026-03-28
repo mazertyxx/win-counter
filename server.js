@@ -115,12 +115,9 @@ app.post("/multiplier", (req, res) => {
   const { value } = req.body;
 
   multiplier = parseInt(value);
-  multiplierEnd = Date.now() + 5 * 60 * 1000; // 5 minutes
+  multiplierEnd = Date.now() + 5 * 60 * 1000;
 
-  res.json({
-    multiplier,
-    multiplierEnd
-  });
+  res.json({ multiplier, multiplierEnd });
 });
 
 // =====================
