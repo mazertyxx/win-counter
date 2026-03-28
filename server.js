@@ -46,10 +46,6 @@ function addWin(amount) {
   wins += amount * multiplier;
 
   if (!Number.isFinite(wins)) wins = 0;
-
-  if (wins >= goal) {
-    wins = 0;
-  }
 }
 
 // +1
