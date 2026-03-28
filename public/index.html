@@ -61,8 +61,8 @@ async function update() {
 
     // 🛡 SAFE VALUES (anti null / NaN)
     const wins = Number.isFinite(data.wins) ? data.wins : 0;
-    const goal = Number.isFinite(data.goal) ? data.goal : 100;
-    const mult = Number.isFinite(data.multiplier) ? data.multiplier : 1;
+    const goal = Number.isFinite(data.goal) ? data.goal : 10;
+    const mult = Number.isFinite(data.multiplier) ? data.multiplier : 2;
     const end = Number.isFinite(data.multiplierEnd) ? data.multiplierEnd : 0;
 
     const winEl = document.getElementById("wins");
