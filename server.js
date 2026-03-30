@@ -121,6 +121,16 @@ app.post("/goal", (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 
+const path = require("path");
+
+// Sert le dossier public
+app.use(express.static("public"));
+
+// Route principale
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 app.listen(PORT, () => {
   console.log("🚀 Serveur running on port " + PORT);
 });
